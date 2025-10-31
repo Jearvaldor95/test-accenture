@@ -44,12 +44,12 @@ jobs:
       # 7️ Deploy en Azure Web App (Linux) usando imagen Docker
       - name: Deploy to Azure Web App
         run: |
-          az webapp config container set
-            --name test-accenture-app
-            --resource-group test-accenture-rg
-            --docker-custom-image-name accentureacr.azurecr.io/test-accenture:latest
-            --docker-registry-server-url https://accentureacr.azurecr.io
-            --docker-registry-server-user ${{ secrets.ACR_USERNAME }}
+          az webapp config container set \
+            --name test-accenture-app \
+            --resource-group test-accenture-rg \
+            --docker-custom-image-name accentureacr.azurecr.io/test-accenture:latest \
+            --docker-registry-server-url https://accentureacr.azurecr.io \
+            --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
             --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
 
 
