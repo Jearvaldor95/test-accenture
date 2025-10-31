@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: db-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    networks:
+      - my-network
+
+  test-accenture:
+    image: 'docker-spring-web-flux-mysql:accenture'
+    build:
+        dockerfile: Dockerfile
+    container_name: test-accenture
+    environment:
+      SPRING_R2DBC_URL: ${R2DBC_URL}
+      SPRING_R2DBC_USERNAME: ${USERNAME_DEV}
+      SPRING_R2DBC_PASSWORD: ${PASSWORD_DEV}
+      SPRING_PROFILES_ACTIVE: ${PROFILE_ACTIVE}
+    networks:
+      - my-network
+    depends_on:
+      - mysqldb
+    ports:
+      - "8080:8080"
+networks:
+  my-network:
