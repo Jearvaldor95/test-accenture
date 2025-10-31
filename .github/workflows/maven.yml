@@ -16,7 +16,7 @@ jobs:
         image: mysql:8.1
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_db
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         ports:
           - 3306:3306
         options: >-
@@ -26,9 +26,9 @@ jobs:
           --health-retries=5
 
     env:
-      DATASOURCE_DEV: jdbc:mysql://localhost:3306/test_db
-      USERNAME_DEV: root
-      PASSWORD_DEV: root
+      DATASOURCE_DEV: ${{ secrets.DATASOURCE_DEV }}
+      USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
+      PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
 
     steps:
     - uses: actions/checkout@v4
