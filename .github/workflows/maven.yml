@@ -26,7 +26,7 @@ jobs:
           --health-retries=5
 
     env:
-      DATASOURCE_DEV: ${{ secrets.DATASOURCE_DEV }}
+      R2DBC_URL: ${{ secrets.R2DBC_URL }}
       USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
       PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
 
