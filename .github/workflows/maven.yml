@@ -31,8 +31,6 @@ jobs:
       # 3️ Build y test Maven
       - name: Build with Maven
         run: mvn clean install
-        env:
-          SPRING_PROFILES_ACTIVE: ${{ secrest.PROFILE_ACTIVE }}
 
       - name: Run Tests
         run: mvn test
