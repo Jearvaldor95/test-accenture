@@ -3,6 +3,7 @@ package com.accenture.test_accenture.application.service;
 import com.accenture.test_accenture.application.port.in.FranchiseInPort;
 import com.accenture.test_accenture.application.port.out.FranchiseOutPort;
 import com.accenture.test_accenture.domain.Franchise;
+import com.accenture.test_accenture.domain.services.FranchiseValidator;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,7 @@ public class FranchiseUseCase implements FranchiseInPort {
     }
     @Override
     public Mono<Franchise> save(Franchise franchise) {
+        FranchiseValidator.validate(franchise.name());
         return franchiseOutPort.save(franchise);
     }
 
