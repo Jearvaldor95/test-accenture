@@ -35,18 +35,20 @@ jobs:
       - name: Run Tests
         run: mvn test
 
-      # 4️ Login a ACR
+      # 4️ Login a Azure (Service Principal)
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 5️ Login a ACR
       - name: Login to Azure Container Registry
         run: |
           echo ${{ secrets.ACR_PASSWORD }} | docker login accentureacr.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
-      # 5️ Build Docker image
+      # 6️ Build Docker image
       - name: Build Docker image
         run: docker build -t accentureacr.azurecr.io/test-accenture:latest .
-
-      # 6️ Push Docker image
-      - name: Push Docker image
-        run: docker push accentureacr.azurecr.io/test-accenture:latest
 
       # 7️ Push Docker image
       - name: Push Docker image
@@ -56,9 +58,9 @@ jobs:
       - name: Deploy to Azure Web App
         run: |
           az webapp config container set \
-            --name test-accenture-app \
-            --resource-group test-accenture-rg \
-            --docker-custom-image-name accentureacr.azurecr.io/test-accenture:latest \
-            --docker-registry-server-url https://accentureacr.azurecr.io \
-            --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
-            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+             --name test-accenture-app \
+             --resource-group test-accenture-rg \
+             --container-image-name accentureacr.azurecr.io/test-accenture:latest \
+             --container-registry-url https://accentureacr.azurecr.io \
+             --container-registry-user ${{ secrets.ACR_USERNAME }} \
+             --container-registry-password ${{ secrets.ACR_PASSWORD }}
