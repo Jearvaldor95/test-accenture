@@ -1,5 +1,6 @@
 package com.accenture.test_accenture.infraestructure.web.controllers;
 
+import com.accenture.test_accenture.application.port.ProductBranch;
 import com.accenture.test_accenture.application.port.in.FranchiseInPort;
 import com.accenture.test_accenture.domain.Franchise;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,10 @@ public class FranchiseController {
     @PutMapping("/{id}")
     public Mono<Franchise> updateName(@PathVariable("id") Long franchiseId, @RequestParam String name){
         return franchiseInPort.updateName(franchiseId, name);
+    }
+
+    @GetMapping("/{id}/productos-max-stock")
+    public Flux<ProductBranch> getProductWithMaxStockPerBranchForFranchise(@PathVariable("id") Long franchiseId) {
+        return franchiseInPort.findProductWithMaxStockPerBranchForFranchise(franchiseId);
     }
 }

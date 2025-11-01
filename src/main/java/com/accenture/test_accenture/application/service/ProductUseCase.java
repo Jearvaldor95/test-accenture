@@ -3,6 +3,7 @@ package com.accenture.test_accenture.application.service;
 import com.accenture.test_accenture.application.port.in.ProductInPort;
 import com.accenture.test_accenture.application.port.out.ProductOutPort;
 import com.accenture.test_accenture.domain.Product;
+import com.accenture.test_accenture.domain.services.ProductValidator;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,6 +19,7 @@ public class ProductUseCase implements ProductInPort {
 
     @Override
     public Mono<Product> save(Product product) {
+        ProductValidator.validate(product.name(), product.stock(), product.branchId());
         return productOutPort.save(product);
     }
 
