@@ -1,45 +1,66 @@
-name: Java CI with Maven
+name: Java CI/CD to Azure Web App
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.1
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
+    # Variables de entorno
     env:
       R2DBC_URL: ${{ secrets.R2DBC_URL }}
       USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
       PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
+      SPRING_PROFILES_ACTIVE: dev
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn clean install
+      # 1️ Clonar repo
+      - uses: actions/checkout@v4
 
-    - name: Run Tests
-      run: mvn test
+      # 2️ Configurar JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3️ Build y test Maven
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run Tests
+        run: mvn test
+
+      # 4️ Login a Azure (Service Principal)
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 5️ Login a ACR
+      - name: Login to Azure Container Registry
+        run: |
+          echo ${{ secrets.ACR_PASSWORD }} | docker login accentureacr.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      # 6️ Build Docker image
+      - name: Build Docker image
+        run: docker build -t accentureacr.azurecr.io/test-accenture:latest .
+
+      # 7️ Push Docker image
+      - name: Push Docker image
+        run: docker push accentureacr.azurecr.io/test-accenture:latest
+
+      # 8️ Deploy en Azure Web App usando la nueva sintaxis
+      - name: Deploy to Azure Web App
+        run: |
+          az webapp config container set \
+             --name test-accenture-app \
+             --resource-group test-accenture-rg \
+             --container-image-name accentureacr.azurecr.io/test-accenture:latest \
+             --container-registry-url https://accentureacr.azurecr.io \
+             --container-registry-user ${{ secrets.ACR_USERNAME }} \
+             --container-registry-password ${{ secrets.ACR_PASSWORD }}

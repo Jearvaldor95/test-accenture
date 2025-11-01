@@ -2,6 +2,7 @@ package com.accenture.test_accenture.infraestructure.config;
 
 import com.accenture.test_accenture.infraestructure.exceptions.ErrorResponse;
 import com.accenture.test_accenture.infraestructure.exceptions.NotFoundException;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,5 +43,6 @@ public class GlobalExceptionHandler {
     public Mono<ErrorResponse> handlerNotAllowedException(Exception ex) {
         return Mono.just(
                 new ErrorResponse("METHOD_NOT_ALLOWED", ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED.value()));
+
     }
 }
