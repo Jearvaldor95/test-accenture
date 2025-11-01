@@ -56,9 +56,9 @@ jobs:
       - name: Deploy to Azure Web App
         run: |
           az webapp config container set \
-             --name test-accenture-app \
-             --resource-group test-accenture-rg \
-             --container-image-name accentureacr.azurecr.io/test-accenture:latest \
-             --container-registry-url https://accentureacr.azurecr.io \
-             --container-registry-user ${{ secrets.ACR_USERNAME }} \
-             --container-registry-password ${{ secrets.ACR_PASSWORD }}
+            --name test-accenture-app \
+            --resource-group test-accenture-rg \
+            --docker-custom-image-name accentureacr.azurecr.io/test-accenture:latest \
+            --docker-registry-server-url https://accentureacr.azurecr.io \
+            --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
+            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
