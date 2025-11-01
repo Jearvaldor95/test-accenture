@@ -44,4 +44,5 @@ public class FranchiseController {
     public Flux<ProductBranch> getProductWithMaxStockPerBranchForFranchise(@PathVariable Long id) {
         return franchiseInPort.findProductWithMaxStockPerBranchForFranchise(id);
     }
+    
 }
