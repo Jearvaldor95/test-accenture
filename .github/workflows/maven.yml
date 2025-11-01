@@ -9,13 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Variables de entorno
-    env:
-      R2DBC_URL: ${{ secrets.R2DBC_URL }}
-      USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
-      PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
-      SPRING_PROFILES_ACTIVE: dev
-
     steps:
       # 1️ Clonar repo
       - uses: actions/checkout@v4
@@ -57,13 +50,19 @@ jobs:
       # 8️ Deploy en Azure Web App usando la nueva sintaxis
       - name: Deploy to Azure Web App
         run: |
-          az webapp config container set \
-            --name test-accenture-app \
-            --resource-group test-accenture-rg \
-            --container-image-name accentureacr.azurecr.io/test-accenture:latest \
-            --container-registry-url https://accentureacr.azurecr.io \
-            --container-registry-user ${{ secrets.ACR_USERNAME }} \
-            --container-registry-password ${{ secrets.ACR_PASSWORD }}
+         az webapp config container set \
+         --name test-accenture-app \
+         --resource-group test-accenture-rg \
+         --container-image-name accentureacr.azurecr.io/test-accenture:latest \
+         --container-registry-url https://accentureacr.azurecr.io \
+         --container-registry-user ${{ secrets.ACR_USERNAME }} \
+         --container-registry-password ${{ secrets.ACR_PASSWORD }} \
+         --environment-variables \
+         R2DBC_URL=${{ secrets.R2DBC_URL }} \
+         USERNAME_DEV=${{ secrets.USERNAME_DEV }} \
+         PASSWORD_DEV=${{ secrets.PASSWORD_DEV }} \
+         SPRING_PROFILES_ACTIVE=dev
+
 
 
 
