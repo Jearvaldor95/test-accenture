@@ -1,9 +1,8 @@
-name: Java CI/CD to Azure Web App
+name: Java CI/CD with Maven and Azure
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build-and-deploy:
