@@ -191,4 +191,4 @@ docker-compose up --build
 ```
 
 -- Puedes probar tambien esta levantada en Azure
-URL: https://test-accenture-backend.azurewebsites.net/api/franchises
+URL: https://test-accenture-app.azurewebsites.net/api/franchises
