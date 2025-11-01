@@ -9,13 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Variables de entorno
-    env:
-      R2DBC_URL: ${{ secrets.R2DBC_URL }}
-      USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
-      PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
-      SPRING_PROFILES_ACTIVE: dev
-
     steps:
       # 1️ Clonar repo
       - uses: actions/checkout@v4
@@ -64,3 +57,8 @@ jobs:
             --container-registry-url https://accentureacr.azurecr.io \
             --container-registry-user ${{ secrets.ACR_USERNAME }} \
             --container-registry-password ${{ secrets.ACR_PASSWORD }}
+            --environment-variables \
+              R2DBC_URL=${{ secrets.R2DBC_URL }} \
+              USERNAME_DEV=${{ secrets.USERNAME_DEV }} \
+              PASSWORD_DEV=${{ secrets.PASSWORD_DEV }} \
+              SPRING_PROFILES_ACTIVE=dev
