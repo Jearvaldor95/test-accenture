@@ -43,5 +43,6 @@ public class GlobalExceptionHandler {
     public Mono<ErrorResponse> handlerNotAllowedException(Exception ex) {
         return Mono.just(
                 new ErrorResponse("METHOD_NOT_ALLOWED", ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED.value()));
+
     }
 }
