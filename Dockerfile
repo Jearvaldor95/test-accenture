@@ -6,5 +6,5 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY target/test-accenture-0.0.1-SNAPSHOT.jar test-accenture.app
-EXPOSE 8096
+EXPOSE 80
 ENTRYPOINT ["java", "-jar", "test-accenture.app"]
