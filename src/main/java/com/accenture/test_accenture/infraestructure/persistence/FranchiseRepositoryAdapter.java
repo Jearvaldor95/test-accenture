@@ -2,6 +2,7 @@ package com.accenture.test_accenture.infraestructure.persistence;
 
 import com.accenture.test_accenture.application.port.ProductBranch;
 import com.accenture.test_accenture.application.port.out.FranchiseOutPort;
+import com.accenture.test_accenture.domain.Branch;
 import com.accenture.test_accenture.domain.Franchise;
 import com.accenture.test_accenture.infraestructure.exceptions.NotFoundException;
 import com.accenture.test_accenture.infraestructure.mappers.FranchiseMapper;
@@ -12,6 +13,8 @@ import com.accenture.test_accenture.infraestructure.persistence.repositories.Pro
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 public class FranchiseRepositoryAdapter implements FranchiseOutPort {
@@ -29,6 +32,7 @@ public class FranchiseRepositoryAdapter implements FranchiseOutPort {
         this.productRepository = productoRepository;
         this.branchRepository = branchRepository;
     }
+
     @Override
     public Mono<Franchise> save(Franchise franchise) {
         FranchiseEntity franchiseEntity = franchiseMapper.toEntity(franchise);
@@ -39,13 +43,27 @@ public class FranchiseRepositoryAdapter implements FranchiseOutPort {
     @Override
     public Flux<Franchise> findAll() {
         return franchiseRepository.findAll()
-                .map(franchiseMapper::toDomain);
+                .flatMap(franchiseEntity ->
+                        branchRepository.findByFranchiseId(franchiseEntity.getId())
+                                .map(branchEntity -> new Branch(
+                                        branchEntity.getId(),
+                                        branchEntity.getName(),
+                                        branchEntity.getFranchiseId(),
+                                        List.of()
+                                ))
+                                .collectList()
+                                .map(branches -> new Franchise(
+                                        franchiseEntity.getId(),
+                                        franchiseEntity.getName(),
+                                        branches
+                                ))
+                );
     }
 
     @Override
     public Mono<Franchise> updateName(Long id, String name) {
         return franchiseRepository.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Franchise not found by id: "+ id)))
+                .switchIfEmpty(Mono.error(new NotFoundException("Franchise not found by id: " + id)))
                 .flatMap(franchiseEntity -> {
                     franchiseEntity.setName(name);
                     return franchiseRepository.save(franchiseEntity);
